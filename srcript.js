@@ -12,46 +12,99 @@ const Gameboard = (function () {
      [3,6,9],
      [1,5,9],
      [3,5,7]];
+    let playerMoves = [];
+    let cpuMoves = [];
     const allSquare = document.querySelectorAll("td");
 
-    const setGameboard = () => {
-        for (const square of allSquare) {
-            square.addEventListener("click", event => {
-                console.log("HELLO");
-            })
-        }
-    }
-
+// ---------- REMOVE TEXT INSIDE BOARD ----------
     const clearGameboard = () => {
         for (const square of allSquare) {
             square.textContent = "";
         }
     }
 
+// ---------- RECORD PLAYER MOVES ----------
     const playerMove = () => {
+        for (const square of allSquare) {
+            if(square.textContent === "") {
+                square.addEventListener("click", playerClick);
+            }
+            else {
+                square.removeEventListener("click", playerClick);
+            }
+        }
+    }
 
+    function playerClick(square) {
+        playerMoves.push(parseInt(square.target.className));
+        square.target.textContent = "x";
+
+        if(hasWinningPattern(playerMoves)){
+            console.log("PLAYER WINS");
+        }
+        Gameboard.cpuMove();
+    }
+
+// ---------- RECORD CPU MOVES ----------
+    const cpuMove = () => {
+        let freeSquare = getFreeSquare();
+        const cpu = freeSquare[Math.floor(Math.random() * freeSquare.length)];
+        if(cpu !== undefined) {
+            for(const square of allSquare) {
+                if(parseInt(square.className) === cpu) {
+                    square.textContent = "o";
+                    cpuMoves.push(parseInt(square.className));
+                    if(hasWinningPattern(cpuMoves)){
+                        console.log("COMPUTER WINS");
+                    }
+                    Gameboard.playerMove();
+                }
+            }
+        }
+    }
+
+    function getFreeSquare() {
+        let freeSquare = [];
+        for (const square of allSquare) {
+            if(square.textContent === "") {
+                freeSquare.push(parseInt(square.className));
+            }
+        }
+        return freeSquare;
+    }
+
+// ---------- CHECK IF PLAYER OR CPU HAS WINNING PATTERN ----------
+    function hasWinningPattern(moves) {
+        for (const pattern of winningPattern) {
+        // Check if all elements in the 'pattern' are present in 'moves'
+        const isWinning = pattern.every(a => moves.includes(a));
+            if (isWinning) {
+                return true;
+            }
+        }
+        return false;
     }
 
      return {
-        domGameboard,
-        winningPattern,
-        setGameboard,
+        cpuMove,
         clearGameboard,
         playerMove
     };
 })();
 
-// const Player = (function() {
-//     let playerMoves = [];
+const player = function(sign) {
 
-//     const move = () => playerMoves.push(class);
-//     const checkMove = () => {
-//     }
-//  })
+    const changeSign = () => {
 
-// const displayController = (function() {
-//     const domGameboard = document.querySelectorAll("td");
-// })
+    }
 
-// console.log(Gameboard.domGameboard);
-// Gameboard.setGameboard();
+};
+
+const displayController = (function() {
+    // all controls should be here
+    // change player sign
+    // reset
+})();
+
+Gameboard.playerMove();
+// Gameboard.clearGameboard();
