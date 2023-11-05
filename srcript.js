@@ -21,6 +21,9 @@ const Gameboard = (function () {
         for (const square of allSquare) {
             square.textContent = "";
         }
+        playerMoves = [];
+        cpuMoves = [];
+        Gameboard.playerMove();
     }
 
 // ---------- RECORD PLAYER MOVES ----------
@@ -37,9 +40,10 @@ const Gameboard = (function () {
 
     function playerClick(square) {
         playerMoves.push(parseInt(square.target.className));
-        square.target.textContent = "x";
+        square.target.textContent = displayController.playerSign();
 
         if(hasWinningPattern(playerMoves)){
+            // go winning function
             console.log("PLAYER WINS");
         }
         Gameboard.cpuMove();
@@ -52,9 +56,10 @@ const Gameboard = (function () {
         if(cpu !== undefined) {
             for(const square of allSquare) {
                 if(parseInt(square.className) === cpu) {
-                    square.textContent = "o";
+                    square.textContent = displayController.computerSign();
                     cpuMoves.push(parseInt(square.className));
                     if(hasWinningPattern(cpuMoves)){
+                        // go winning function
                         console.log("COMPUTER WINS");
                     }
                     Gameboard.playerMove();
@@ -86,25 +91,50 @@ const Gameboard = (function () {
     }
 
      return {
-        cpuMove,
         clearGameboard,
-        playerMove
+        playerMove,
+        cpuMove
     };
 })();
 
-const player = function(sign) {
 
-    const changeSign = () => {
-
-    }
-
-};
 
 const displayController = (function() {
-    // all controls should be here
-    // change player sign
-    // reset
+    let pSign = document.querySelector(".active").textContent;
+    let cSign = () => {
+        if(pSign === 'x') {
+            return 'o';
+        }
+        else {
+            return 'x';
+        }
+    }
+
+    let choiceButtons = document.getElementsByClassName("choice");
+    for (let i = 0; i < choiceButtons.length; i++) {
+        choiceButtons[i].addEventListener("click", function() {
+        let current = document.getElementsByClassName("active");
+        current[0].className = current[0].className.replace(" active", "");
+        this.className += " active";
+        // document.getElementsByClassName("active").disabled = true;
+        pSign = this.textContent;
+        Gameboard.clearGameboard();
+        });
+    }
+
+    const playerSign = () => {
+        return pSign;
+    }
+
+    const computerSign = () => {
+        return cSign();
+    }
+
+    return {
+        playerSign,
+        computerSign
+    }
 })();
 
 Gameboard.playerMove();
-// Gameboard.clearGameboard();
+
