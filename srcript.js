@@ -41,11 +41,19 @@ const Gameboard = (function () {
     function playerClick(square) {
         playerMoves.push(parseInt(square.target.className));
         square.target.textContent = displayController.playerSign();
-
-        if(hasWinningPattern(playerMoves)){
-            // go winning function
-            console.log("PLAYER WINS");
-        }
+        console.log(playerMoves);
+        setTimeout(() =>  {
+            if(hasWinningPattern(playerMoves)) {
+                // go winning function
+                // console.log("PLAYER WINS");
+                alert(`PLAYER WINS!!!`);
+                Gameboard.clearGameboard();
+            }
+            if(getFreeSquare().length === 0){
+                alert("IT'S A TIE!!!");
+                Gameboard.clearGameboard();
+            }
+        }, 1000);
         Gameboard.cpuMove();
     }
 
@@ -58,10 +66,18 @@ const Gameboard = (function () {
                 if(parseInt(square.className) === cpu) {
                     square.textContent = displayController.computerSign();
                     cpuMoves.push(parseInt(square.className));
-                    if(hasWinningPattern(cpuMoves)){
-                        // go winning function
-                        console.log("COMPUTER WINS");
-                    }
+                    setTimeout(() =>  {
+                        if(hasWinningPattern(cpuMoves)){
+                            // go winning function
+                            // console.log("COMPUTER WINS");
+                            alert(`COMPUTER WINS!!!`);
+                            Gameboard.clearGameboard();
+                        }
+                        if(getFreeSquare().length === 0){
+                            alert("IT'S A TIE!!!");
+                            Gameboard.clearGameboard();
+                        }
+                    }, 1000);
                     Gameboard.playerMove();
                 }
             }
@@ -90,10 +106,12 @@ const Gameboard = (function () {
         return false;
     }
 
+
      return {
         clearGameboard,
         playerMove,
-        cpuMove
+        cpuMove,
+        cpuMoves
     };
 })();
 
@@ -130,6 +148,10 @@ const displayController = (function() {
         return cSign();
     }
 
+    const restart = document.querySelector(".restart");
+
+    restart.addEventListener("click", Gameboard.clearGameboard);
+
     return {
         playerSign,
         computerSign
@@ -137,4 +159,5 @@ const displayController = (function() {
 })();
 
 Gameboard.playerMove();
+
 
